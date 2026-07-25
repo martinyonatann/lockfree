@@ -97,12 +97,12 @@ TEST(SPSCQueue, ProducerConsumer)
 {
     lockfree::SPSCQueue<int, 1024> queue;
 
-    constexpr int N = 100000;
+    constexpr int input = 100000;
 
     std::thread producer(
         [&]
         {
-            for (int i = 0; i < N;)
+            for (int i = 0; i < input;)
             {
                 if (queue.push(i))
                 {
@@ -117,7 +117,7 @@ TEST(SPSCQueue, ProducerConsumer)
             int expected = 0;
             int value = 0;
 
-            while (expected < N)
+            while (expected < input)
             {
                 if (queue.pop(value))
                 {

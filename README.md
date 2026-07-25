@@ -1,6 +1,6 @@
 # LockFree
 
-> A modern C++23 lock-free programming library focused on building high-performance, low-latency systems for High-Frequency Trading (HFT), real-time applications, and systems programming.
+> A modern C++23 library for learning and building lock-free data structures, low-latency algorithms, and high-performance concurrent systems inspired by High-Frequency Trading (HFT).
 
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -10,17 +10,53 @@
 
 ## Overview
 
-**LockFree** is an educational and production-oriented project that explores the implementation of lock-free data structures and concurrent algorithms using modern C++.
+**LockFree** is an educational, performance-oriented C++ project that explores the design and implementation of lock-free data structures using modern C++23.
 
-The primary goal is to understand **how professional low-latency systems are built**, with a strong emphasis on:
+The project focuses on understanding how professional low-latency systems are built, emphasizing correctness, performance, and clean engineering practices.
+
+Topics include:
 
 - Lock-free programming
+- C++ memory model
 - Memory ordering
 - Cache-friendly data structures
-- Low-latency design
+- Low-latency system design
 - High-throughput concurrent algorithms
 
-This repository is being built incrementally, with each component designed, benchmarked, and documented in detail.
+Every component is developed incrementally using:
+
+- Test-Driven Development (TDD)
+- Benchmarks
+- Performance analysis
+- Documentation
+
+---
+
+## Current Status
+
+### Implemented
+
+- Cacheline utilities
+- Atomic utilities
+- Ring Buffer
+- Lock-Free SPSC Queue
+- Unit tests (GoogleTest)
+- Benchmarks (Google Benchmark)
+
+### In Progress
+
+- Benchmark optimization
+- Performance analysis
+- Documentation
+
+### Planned
+
+- Memory Pool
+- MPSC Queue
+- SPMC Queue
+- MPMC Queue
+- Hazard Pointers
+- Epoch-Based Reclamation
 
 ---
 
@@ -30,60 +66,77 @@ This repository is being built incrementally, with each component designed, benc
 - Master lock-free programming
 - Understand the C++ memory model
 - Build reusable concurrent data structures
-- Measure performance through benchmarks
+- Benchmark and optimize performance
 - Document design decisions and trade-offs
-- Serve as a foundation for future HFT projects
+- Build a strong systems programming / HFT portfolio
 
 ---
 
 ## Roadmap
 
-| Version | Component           | Status |
-| ------- | ------------------- | :----: |
-| v0.1    | Project Setup       |   ⬜   |
-| v0.2    | Cacheline Utilities |   ⬜   |
-| v0.3    | Atomic Utilities    |   ⬜   |
-| v0.4    | Ring Buffer         |   ⬜   |
-| v0.5    | SPSC Queue          |   ⬜   |
-| v0.6    | Memory Pool         |   ⬜   |
-| v0.7    | MPMC Queue          |   ⬜   |
-| v0.8    | Benchmarks          |   ⬜   |
-| v0.9    | Documentation       |   ⬜   |
-| v1.0    | Stable Release      |   ⬜   |
+| Version | Milestone                                  | Status |
+| ------- | ------------------------------------------ | :----: |
+| v0.1.0  | Foundation (Cacheline, Atomic, RingBuffer) |   ✅   |
+| v0.2.0  | Lock-Free SPSC Queue                       |   ✅   |
+| v0.3.0  | Benchmark Suite                            |   🚧   |
+| v0.4.0  | Memory Pool                                |   ⬜   |
+| v0.5.0  | MPSC Queue                                 |   ⬜   |
+| v0.6.0  | SPMC Queue                                 |   ⬜   |
+| v0.7.0  | MPMC Queue                                 |   ⬜   |
+| v1.0.0  | Stable Release                             |   ⬜   |
 
 ---
 
-## Planned Components
+## Components
 
 ### Core
 
 - Cacheline utilities
 - Atomic helpers
-- Memory barriers
-- Lock-free memory pool
+- Memory barriers _(planned)_
+- Lock-free memory pool _(planned)_
 
 ### Data Structures
 
 - Ring Buffer
 - SPSC Queue
-- MPSC Queue
-- SPMC Queue
-- MPMC Queue
+- MPSC Queue _(planned)_
+- SPMC Queue _(planned)_
+- MPMC Queue _(planned)_
 
 ### Utilities
 
-- Spinlock
-- Object Pool
+- Spinlock _(planned)_
+- Object Pool _(planned)_
 - Hazard Pointer _(planned)_
 - Epoch-Based Reclamation _(planned)_
 
-### Benchmark
+---
 
-- Throughput
-- Latency
-- Memory usage
-- Cache efficiency
-- False sharing analysis
+## Benchmarks
+
+Benchmarks are implemented using **Google Benchmark** to measure throughput and latency.
+
+### Environment
+
+| Item      | Value                      |
+| --------- | -------------------------- |
+| CPU       | AMD Ryzen 7 5800H (8C/16T) |
+| Compiler  | Clang 18                   |
+| OS        | Ubuntu 24.04 LTS           |
+| Framework | Google Benchmark           |
+
+### Current Benchmarks
+
+- SPSC Queue - Push
+- SPSC Queue - Pop
+- SPSC Queue - Push + Pop
+- SPSC Queue - Producer / Consumer
+- std::queue + std::mutex (baseline)
+
+> **Note**
+>
+> Benchmark results are hardware-dependent and intended primarily for regression tracking between releases rather than absolute performance comparisons.
 
 ---
 
@@ -96,7 +149,6 @@ lockfree/
 ├── examples/
 ├── include/
 │   └── lockfree/
-├── src/
 ├── tests/
 ├── CMakeLists.txt
 └── README.md
@@ -104,27 +156,57 @@ lockfree/
 
 ---
 
+## Building
+
+### Requirements
+
+- C++23 compatible compiler
+- CMake 3.20+
+- GoogleTest
+- Google Benchmark
+
+### Build
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+### Run Tests
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+
+### Run Benchmarks
+
+```bash
+./build/benchmark/spsc_queue_benchmark
+```
+
+---
+
 ## Technologies
 
-| Category     | Technology       |
-| ------------ | ---------------- |
-| Language     | C++23            |
-| Build System | CMake            |
-| Testing      | GoogleTest       |
-| Benchmark    | Google Benchmark |
-| Formatter    | clang-format     |
-| Linter       | clang-tidy       |
-| CI           | GitHub Actions   |
+| Category     | Technology                 |
+| ------------ | -------------------------- |
+| Language     | C++23                      |
+| Build System | CMake                      |
+| Testing      | GoogleTest                 |
+| Benchmark    | Google Benchmark           |
+| Formatter    | clang-format               |
+| Linter       | clang-tidy                 |
+| CI           | GitHub Actions _(planned)_ |
 
 ---
 
 ## Learning Topics
 
-This project covers topics including:
+This repository explores:
 
 - Modern C++
 - Concurrency
-- std::atomic
+- `std::atomic`
 - Memory Ordering
 - Compare-and-Swap (CAS)
 - Lock-Free Programming
@@ -137,37 +219,30 @@ This project covers topics including:
 
 ---
 
-## Philosophy
+## Design Philosophy
 
-This project prioritizes:
+Every component in this repository should provide:
 
-1. Correctness
-2. Readability
-3. Performance
-4. Benchmarking
-5. Documentation
-
-Every component should include:
-
-- Design explanation
-- Complexity analysis
-- Thread-safety guarantees
+- Correctness before optimization
+- Clean and maintainable code
+- Clear thread-safety guarantees
 - Unit tests
 - Benchmarks
+- Design documentation
 - Performance discussion
 
 ---
 
 ## References
 
-- Effective Modern C++
-- C++ Concurrency in Action
-- Computer Systems: A Programmer's Perspective
-- The Art of Multiprocessor Programming
+- _Effective Modern C++_ — Scott Meyers
+- _C++ Concurrency in Action_ — Anthony Williams
+- _Computer Systems: A Programmer's Perspective_
+- _The Art of Multiprocessor Programming_
 - Intel® 64 and IA-32 Architectures Optimization Reference Manual
 
 ---
 
 ## License
 
-MIT License
+This project is licensed under the MIT License.

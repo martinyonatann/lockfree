@@ -1,0 +1,8 @@
+-----------------------------------------------------------------------
+Benchmark                             Time             CPU   Iterations
+-----------------------------------------------------------------------
+BM_SPSCQueueProducerConsumer    1231565 ns        41633 ns        10000
+BM_StdQueueMutex                   10.3 ns         10.3 ns     67078498
+BM_SPSCQueuePop                    1013 ns         1013 ns       685377
+BM_SPSCQueuePush                    536 ns          536 ns      1319398
+BM_SPSCQueuePushPop               0.757 ns        0.757 ns    931241306
