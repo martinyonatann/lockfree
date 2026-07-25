@@ -21,10 +21,9 @@ template <typename T, std::size_t Capacity> class SPSCQueue
 
   private:
     std::array<T, Capacity> buffer_{};
-
     std::size_t head_{0};
     std::size_t tail_{0};
-    bool empty_{true};
+    std::size_t size_{0};
 };
 
 template <typename T, std::size_t Capacity>
@@ -36,13 +35,13 @@ constexpr auto SPSCQueue<T, Capacity>::capacity() const noexcept -> std::size_t
 template <typename T, std::size_t Capacity>
 auto SPSCQueue<T, Capacity>::full() const noexcept -> bool
 {
-    return false;
+    return size_ == Capacity;
 }
 
 template <typename T, std::size_t Capacity>
 auto SPSCQueue<T, Capacity>::empty() const noexcept -> bool
 {
-    return empty_;
+    return size_ == 0;
 }
 
 template <typename T, std::size_t Capacity>
@@ -54,8 +53,8 @@ auto SPSCQueue<T, Capacity>::push(const T& value) -> bool
     }
 
     buffer_[tail_] = value;
-    ++tail_;
-    empty_ = false;
+    tail_ = (tail_ + 1) % Capacity;
+    ++size_;
 
     return true;
 }
@@ -68,9 +67,8 @@ template <typename T, std::size_t Capacity> auto SPSCQueue<T, Capacity>::pop(T& 
     }
 
     value = buffer_[head_];
-    ++head_;
-
-    empty_ = true;
+    head_ = (head_ + 1) % Capacity;
+    --size_;
 
     return true;
 }
