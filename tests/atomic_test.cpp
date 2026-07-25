@@ -4,15 +4,17 @@
 
 TEST(Atomic, LoadAcquire)
 {
-    std::atomic<int> value(42);
-    EXPECT_EQ(lockfree::loadAcquire(value), 42);
+    const int rhs = 42;
+    std::atomic<int> value(rhs);
+    EXPECT_EQ(lockfree::loadAcquire(value), rhs);
 }
 
 TEST(Atomic, StoreRelease)
 {
+    const int desired = 100;
     std::atomic<int> value{0};
-    lockfree::storeRelease(value, 100);
-    EXPECT_EQ(value.load(), 100);
+    lockfree::storeRelease(value, desired);
+    EXPECT_EQ(value.load(), desired);
 }
 
 TEST(Atomic, CompareExchangeStrong)
