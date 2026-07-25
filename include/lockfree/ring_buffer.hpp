@@ -11,7 +11,9 @@ template <typename T, std::size_t Capacity> class RingBuffer
   public:
     RingBuffer() = default;
 
-    auto push(const T&) -> bool;
+    auto push(const T& value) -> bool;
+
+    auto pop(T& value) -> bool;
 
     [[nodiscard]]
     auto empty() const noexcept -> bool;
@@ -68,6 +70,20 @@ auto RingBuffer<T, Capacity>::push(const T& value) -> bool
     buffer_[tail_] = value;
     ++tail_;
     ++size_;
+
+    return true;
+}
+
+template <typename T, std::size_t Capacity> auto RingBuffer<T, Capacity>::pop(T& value) -> bool
+{
+    if (empty())
+    {
+        return false;
+    }
+
+    value = buffer_[head_];
+    ++head_;
+    --size_;
 
     return true;
 }
