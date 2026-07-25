@@ -5,6 +5,7 @@ Checks: >
   readability-*,
   modernize-*,
   cppcoreguidelines-*,
+  -modernize-use-trailing-return-type,
   -cppcoreguidelines-owning-memory
 
 WarningsAsErrors: ''

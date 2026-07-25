@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstddef>
 
 namespace lockfree
@@ -17,11 +18,10 @@ template <typename T> struct alignas(cache_line_size) CacheAligned
     T value;
 };
 
-/// Paddomg utility to separate frequently modified data and
+/// Padding utility to separate frequently modified data and
 /// reduce the chance of false sharing.
 struct alignas(cache_line_size) CachePadding
 {
-    std::byte data[cache_line_size];
+    std::array<std::byte, cache_line_size> data;
 };
-
 } // namespace lockfree

@@ -21,9 +21,10 @@ TEST(CacheLine, PaddingSize)
 
 TEST(CacheLine, CacheAlignedStoreValue)
 {
+    const int rhs = 42;
     lockfree::CacheAligned<int> value{};
-    value.value = 42;
+    value.value = rhs;
 
-    EXPECT_EQ(value.value, 42);
+    EXPECT_EQ(value.value, rhs);
 }
 } // namespace
