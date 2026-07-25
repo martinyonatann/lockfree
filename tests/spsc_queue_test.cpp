@@ -33,14 +33,16 @@ TEST(SPSCQueue, PopOneElement)
     EXPECT_TRUE(queue.empty());
 }
 
-TEST(SPSCQueue, PushIntoFullQueue)
+TEST(SPSCQueue, QueueBecomesFullAfterCapacityMinusOneElements)
 {
-    lockfree::SPSCQueue<int, 2> queue;
+    lockfree::SPSCQueue<int, 4> queue;
 
     EXPECT_TRUE(queue.push(1));
     EXPECT_TRUE(queue.push(2));
+    EXPECT_TRUE(queue.push(3));
+
     EXPECT_TRUE(queue.full());
-    EXPECT_FALSE(queue.push(3));
+    EXPECT_FALSE(queue.push(4));
 }
 
 TEST(SPSCQueue, PreservesFifoOrder)
@@ -66,7 +68,7 @@ TEST(SPSCQueue, PreservesFifoOrder)
 
 TEST(SPSCQueue, WrapAround)
 {
-    lockfree::SPSCQueue<int, 3> queue;
+    lockfree::SPSCQueue<int, 4> queue;
 
     int value = 0;
 
@@ -89,4 +91,42 @@ TEST(SPSCQueue, WrapAround)
     EXPECT_EQ(value, 4);
 
     EXPECT_TRUE(queue.empty());
+}
+
+TEST(SPSCQueue, ProducerConsumer)
+{
+    lockfree::SPSCQueue<int, 1024> queue;
+
+    constexpr int N = 100000;
+
+    std::thread producer(
+        [&]
+        {
+            for (int i = 0; i < N;)
+            {
+                if (queue.push(i))
+                {
+                    ++i;
+                }
+            }
+        });
+
+    std::thread consumer(
+        [&]
+        {
+            int expected = 0;
+            int value = 0;
+
+            while (expected < N)
+            {
+                if (queue.pop(value))
+                {
+                    EXPECT_EQ(value, expected);
+                    ++expected;
+                }
+            }
+        });
+
+    producer.join();
+    consumer.join();
 }
