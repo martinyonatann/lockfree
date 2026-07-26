@@ -6,6 +6,7 @@ add_executable(spsc_queue_benchmark
     spsc_queue_pop_benchmark.cpp
     spsc_queue_push_benchmark.cpp
     spsc_queue_push_pop_benchmark.cpp
+    mpsc_queue_benchmark.cpp
 )
 
 target_link_libraries(spsc_queue_benchmark

@@ -3,6 +3,7 @@ add_executable(cacheline_test
     atomic_test.cpp
     ring_buffer_test.cpp
     spsc_queue_test.cpp
+    mpsc_queue_test.cpp
 )
 
 target_link_libraries(cacheline_test
