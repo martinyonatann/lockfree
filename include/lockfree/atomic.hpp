@@ -10,6 +10,12 @@ using std::memory_order_relaxed;
 using std::memory_order_release;
 using std::memory_order_seq_cst;
 
+template <typename T> bool cas(std::atomic<T>& atom, T& expected, T desired)
+{
+    return atom.compare_exchange_weak(expected, desired, std::memory_order_acq_rel,
+                                      std::memory_order_acquire);
+}
+
 template <typename T>
 [[nodiscard]]
 inline T loadAcquire(const std::atomic<T>& value) noexcept
