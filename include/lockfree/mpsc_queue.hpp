@@ -1,13 +1,19 @@
 #pragma once
 
+#include "lockfree/atomic.hpp"
 #include <array>
 #include <atomic>
 #include <cstddef>
+
+using std::atomic;
+
 namespace lockfree
 {
 template <typename T, std::size_t Capacity> class MPSCQueue
 {
   public:
+    MPSCQueue() = default;
+
     auto push(const T& value) -> bool;
     auto pop(T& value) -> bool;
 
@@ -16,10 +22,9 @@ template <typename T, std::size_t Capacity> class MPSCQueue
     constexpr auto capacity() const noexcept -> std::size_t;
 
   private:
-    std::array<T, Capacity> buffer_{};
-
-    std::atomic<std::size_t> head_{0};
-    std::atomic<std::size_t> tail_{0};
+    std::array<T, Capacity> buffer_;
+    atomic<std::size_t> head_{0};
+    atomic<std::size_t> tail_{0};
 };
 
 template <typename T, std::size_t Capacity>
@@ -31,8 +36,8 @@ constexpr auto MPSCQueue<T, Capacity>::capacity() const noexcept -> std::size_t
 template <typename T, std::size_t Capacity>
 auto MPSCQueue<T, Capacity>::full() const noexcept -> bool
 {
-    const auto tail = tail_.load(std::memory_order_acquire);
-    const auto head = head_.load(std::memory_order_acquire);
+    const auto tail = lockfree::loadAcquire(tail_);
+    const auto head = lockfree::loadAcquire(head_);
 
     return ((tail + 1) % Capacity) == head;
 }
@@ -40,7 +45,7 @@ auto MPSCQueue<T, Capacity>::full() const noexcept -> bool
 template <typename T, std::size_t Capacity>
 auto MPSCQueue<T, Capacity>::empty() const noexcept -> bool
 {
-    return head_.load(std::memory_order_acquire) == tail_.load(std::memory_order_acquire);
+    return lockfree::loadAcquire(head_) == lockfree::loadAcquire(tail_);
 }
 
 template <typename T, std::size_t Capacity>
@@ -51,11 +56,12 @@ auto MPSCQueue<T, Capacity>::push(const T& value) -> bool
         return false;
     }
 
-    const auto tail = tail_.load(std::memory_order_relaxed);
+    const auto tail = lockfree::loadAcquire(tail_);
     const auto next_tail = (tail + 1) % Capacity;
 
     buffer_[tail] = value;
-    tail_.store(next_tail, std::memory_order_release);
+
+    lockfree::storeRelease(tail_, next_tail);
 
     return true;
 }
@@ -67,11 +73,14 @@ template <typename T, std::size_t Capacity> auto MPSCQueue<T, Capacity>::pop(T& 
         return false;
     }
 
-    const auto head = head_.load(std::memory_order_relaxed);
+    const auto head = lockfree::loadAcquire(head_);
     const auto next_head = (head + 1) % Capacity;
 
     value = buffer_[head];
-    head_.store(next_head, std::memory_order_release);
+
+    lockfree::storeRelease(head_, next_head);
+
     return true;
 }
+
 } // namespace lockfree
